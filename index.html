@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Keday 70 – Sistem Kasir</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#e2a925"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <link rel="apple-touch-icon" href="icons/icon.svg"/>
+</head>
+<body class="login-page">
+
+  <div class="login-bg">
+    <div class="login-bg-number">70</div>
+    <div class="login-glow g1"></div>
+    <div class="login-glow g2"></div>
+  </div>
+
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="logo-circle">K<span>70</span></div>
+        <div>
+          <div class="logo-name">Keday Tujuh Puluh</div>
+          <div class="logo-sub">Sistem Kasir & Manajemen</div>
+        </div>
+      </div>
+
+      <div id="loginError" class="login-error" style="display:none"></div>
+
+      <div class="form-group">
+        <label>Cabang</label>
+        <div class="select-wrap">
+          <select id="cabang">
+            <option value="sukaseuri">🏪 Cabang Sukaseuri</option>
+            <option value="purwasari">🏪 Cabang Purwasari</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Role / Jabatan</label>
+        <div class="select-wrap">
+          <select id="role">
+            <option value="kasir">🧾 Kasir</option>
+            <option value="dapur">👨‍🍳 Dapur</option>
+            <option value="owner">👑 Owner</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="username" placeholder="Masukkan username..." autocomplete="off"/>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <div class="pass-wrap">
+          <input type="password" id="password" placeholder="Masukkan password..."/>
+          <button class="pass-toggle" onclick="togglePass()">👁</button>
+        </div>
+      </div>
+
+      <button class="btn-login" onclick="doLogin()">
+        <span>Masuk</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+
+      <div class="login-hint">
+        <details>
+          <summary>🔑 Demo Akun</summary>
+          <div class="hint-grid">
+            <div><b>Owner:</b> owner / owner123</div>
+            <div><b>Kasir Sukaseuri:</b> kasir.sks / kasir123</div>
+            <div><b>Kasir Purwasari:</b> kasir.pws / kasir123</div>
+            <div><b>Dapur Sukaseuri:</b> dapur.sks / dapur123</div>
+            <div><b>Dapur Purwasari:</b> dapur.pws / dapur123</div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").then(()=>console.log("SW registered")).catch(e=>console.log("SW error:",e));}</script>
+</body>
+</html>
