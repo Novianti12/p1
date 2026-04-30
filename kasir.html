@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kasir – Keday 70</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#e2a925"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <link rel="apple-touch-icon" href="icons/icon.svg"/>
+  <style>
+    /* ====== PAYMENT MODAL ====== */
+    .pay-method-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .pay-method-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 16px 10px;
+      background: var(--card); border: 2px solid var(--card-border);
+      border-radius: var(--radius); cursor: pointer;
+      transition: all .25s; color: var(--text-dim);
+      font-size: .82rem; font-weight: 600;
+    }
+    .pay-method-btn:hover { border-color: var(--gold-border); color: var(--text); }
+    .pay-method-btn.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
+    .pay-method-btn .pm-icon { font-size: 1.8rem; }
+    .pay-total-big {
+      text-align: center; font-family: 'Bebas Neue';
+      font-size: 2.2rem; letter-spacing: 3px; color: var(--gold);
+      background: var(--gold-dim); border: 1px solid var(--gold-border);
+      border-radius: var(--radius); padding: 14px; margin-bottom: 20px;
+    }
+    .pay-total-big span { display: block; font-size: .7rem; font-family: 'DM Sans'; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px; }
+    .quick-cash-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;
+    }
+    .qc-btn {
+      padding: 9px 6px; border-radius: 8px; font-size: .8rem; font-weight: 600;
+      background: var(--card); border: 1px solid var(--card-border); color: var(--text-dim);
+      cursor: pointer; transition: all .2s; text-align: center;
+    }
+    .qc-btn:hover { background: var(--gold-dim); border-color: var(--gold-border); color: var(--gold); }
+    .pay-change-display { font-size: 1rem; font-weight: 600; text-align: center; min-height: 24px; padding: 6px 0; }
+    .qris-box {
+      text-align: center; padding: 24px;
+      background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius);
+    }
+    .qris-box .qris-icon { font-size: 3.5rem; margin-bottom: 10px; }
+    .qris-box .qris-label { font-size: .9rem; color: var(--text-dim); }
+    .qris-box .qris-status { font-size: .85rem; color: var(--green); margin-top: 8px; }
+    .transfer-box { display: flex; flex-direction: column; gap: 12px; }
+    .transfer-bank-row {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--card); border: 1px solid var(--card-border);
+      border-radius: var(--radius); padding: 14px 16px;
+    }
+    .transfer-bank-row.selected { border-color: var(--gold); background: var(--gold-dim); }
+    .bank-logo { font-size: 1.5rem; width: 36px; text-align: center; }
+    .bank-info { flex: 1; }
+    .bank-name { font-weight: 600; font-size: .9rem; }
+    .bank-acc  { font-size: .78rem; color: var(--text-dim); }
+    /* ====== STRUK TABS ====== */
+    .struk-tabs {
+      display: flex; gap: 8px; margin-bottom: 14px;
+      border-bottom: 1px solid var(--gold-border); padding-bottom: 10px;
+    }
+    .struk-tab {
+      padding: 7px 16px; border-radius: 8px; font-size: .82rem; font-weight: 600;
+      background: var(--card); border: 1px solid var(--card-border); color: var(--text-dim);
+      cursor: pointer; transition: all .2s;
+    }
+    .struk-tab.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
+    .struk-pane { display: none; }
+    .struk-pane.active { display: block; }
+    .printer-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(49,130,206,.12); border: 1px solid rgba(49,130,206,.25);
+      color: #63b3ed; padding: 4px 12px; border-radius: 100px; font-size: .75rem;
+      margin-bottom: 12px;
+    }
+    .struk-print-actions { display: flex; gap: 8px; margin-top: 14px; }
+    /* ====== ZONE STYLE ====== */
+    .table-select-toprow {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; border-bottom: 1px solid var(--gold-border);
+    }
+    .ts-header { display: flex; align-items: center; gap: 8px; }
+    .ts-label { font-size: .72rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); }
+    .active-meja-badge {
+      background: var(--gold-dim); border: 1px solid var(--gold-border);
+      color: var(--gold); padding: 2px 10px; border-radius: 100px; font-size: .78rem; font-weight: 600;
+    }
+    .table-zone-wrap { overflow-y: auto; max-height: 170px; padding: 8px 12px; border-bottom: 1px solid var(--card-border); }
+    .zona-block { margin-bottom: 10px; }
+    .zona-block-label { font-size: .65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; }
+    .zona-block-meja { display: flex; flex-wrap: wrap; gap: 5px; }
+    .oi-actions-col { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+    .oi-bottom-btns { display: flex; gap: 4px; }
+    .oi-note-btn { background: transparent; color: var(--text-dim); font-size: .9rem; padding: 3px; }
+    .oi-note-btn:hover { color: var(--gold); }
+    .oi-note { font-size: .72rem; color: var(--gold); font-style: italic; }
+    .oi-remove { background: transparent; color: var(--text-dim); font-size: .9rem; padding: 3px; }
+    .oi-remove:hover { color: var(--red); }
+    /* QR */
+    .table-qr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; overflow-y: auto; max-height: 480px; }
+    .table-qr-item { display: flex; flex-direction: column; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 12px; }
+    .qr-table-label { font-size: .8rem; font-weight: 600; color: var(--gold); }
+    .btn-print-qr { background: var(--gold-dim); border: 1px solid var(--gold-border); color: var(--gold); border-radius: var(--radius-sm); padding: 10px 20px; font-weight: 600; font-size: .85rem; width: 100%; }
+  </style>
+</head>
+<body class="app-page">
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="logo-sm">K<span>70</span></div>
+    <div>
+      <div class="topbar-title">Kasir</div>
+      <div class="topbar-sub" id="cabangLabel">–</div>
+    </div>
+  </div>
+  <div class="topbar-center">
+    <div class="time-display" id="timeDisplay"></div>
+    <div id="shiftIndicator" style="font-size:.72rem;margin-top:2px">–</div>
+  </div>
+  <div class="topbar-right">
+    <div class="user-chip" id="userChip" onclick="openProfileModal()" style="cursor:pointer" title="Profile & Shift">👤 Profile</div>
+    <button class="btn-icon" onclick="window.location='index.html'" title="Logout">⏻</button>
+  </div>
+</header>
+
+<div class="kasir-layout">
+  <!-- LEFT: MENU PANEL -->
+  <aside class="menu-panel">
+    <div class="search-bar">
+      <span>🔍</span>
+      <input type="text" id="searchMenu" placeholder="Cari menu..." oninput="filterMenu()"/>
+    </div>
+    <div class="category-tabs" id="categoryTabs"></div>
+    <div class="menu-grid" id="menuGrid"></div>
+  </aside>
+
+  <!-- RIGHT: ORDER PANEL -->
+  <aside class="order-panel">
+    <div class="table-select-toprow">
+      <div class="ts-header">
+        <span class="ts-label">🪑 Pilih Meja</span>
+        <div id="activeMejaLabel" class="active-meja-badge"></div>
+      </div>
+      <button class="btn-qr" onclick="openQRModal()">📱 QR Meja</button>
+    </div>
+    <div class="table-zone-wrap" id="tableBtns"></div>
+    <div class="order-items" id="orderItems">
+      <div class="empty-order">
+        <div style="font-size:3rem">🍜</div>
+        <div>Belum ada pesanan</div>
+        <div style="font-size:.8rem;opacity:.5">Pilih menu di sebelah kiri</div>
+      </div>
+    </div>
+    <div class="order-note">
+      <input type="text" id="orderNote" placeholder="📝 Catatan umum pesanan..."/>
+    </div>
+    <div class="order-summary">
+      <div class="summary-row total"><span>TOTAL</span><span id="totalAmt">Rp 0</span></div>
+    </div>
+    <div class="order-actions">
+      <button class="btn-clear" onclick="clearOrder()">🗑 Bersihkan</button>
+      <button class="btn-send" onclick="sendOrder()">💳 Bayar & Kirim 👨‍🍳</button>
+    </div>
+    <button class="btn-print" onclick="printStruk()">🖨️ Preview Struk</button>
+  </aside>
+</div>
+
+<!-- ===== PAYMENT MODAL ===== -->
+<div class="modal-overlay" id="paymentModal" style="display:none">
+  <div class="modal-card" style="max-width:500px;width:95%">
+    <div class="modal-header">
+      <h3>💳 Pembayaran</h3>
+      <button onclick="closePaymentModal()">✕</button>
+    </div>
+
+    <div class="pay-total-big">
+      <span>TOTAL PEMBAYARAN</span>
+      <span id="payTotalDisplay">Rp 0</span>
+    </div>
+
+    <p style="font-size:.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px">Metode Pembayaran</p>
+    <div class="pay-method-grid">
+      <button class="pay-method-btn" id="payBtn_cash" onclick="selectPayMethod('cash')">
+        <span class="pm-icon">💵</span>
+        <span>Tunai</span>
+      </button>
+      <button class="pay-method-btn" id="payBtn_transfer" onclick="selectPayMethod('transfer')">
+        <span class="pm-icon">🏦</span>
+        <span>Transfer</span>
+      </button>
+      <button class="pay-method-btn" id="payBtn_qris" onclick="selectPayMethod('qris')">
+        <span class="pm-icon">📱</span>
+        <span>QRIS</span>
+      </button>
+    </div>
+
+    <input type="hidden" id="selectedPayMethod" value="cash"/>
+
+    <!-- CASH SECTION -->
+    <div id="cashSection">
+      <div class="form-group">
+        <label>Uang Diterima</label>
+        <input type="number" id="payCashInput" placeholder="Masukkan nominal..." oninput="calcChange()" style="font-size:1.1rem;font-weight:600"/>
+      </div>
+      <p style="font-size:.75rem;color:var(--text-dim);margin-bottom:8px">Nominal Cepat:</p>
+      <div class="quick-cash-grid">
+        <button class="qc-btn" onclick="setQuickCash(10000)">Rp 10.000</button>
+        <button class="qc-btn" onclick="setQuickCash(20000)">Rp 20.000</button>
+        <button class="qc-btn" onclick="setQuickCash(50000)">Rp 50.000</button>
+        <button class="qc-btn" onclick="setQuickCash(100000)">Rp 100.000</button>
+        <button class="qc-btn" onclick="setQuickCash(50000*Math.ceil((pendingOrderForPayment?.total||0)/50000))" id="exactCashBtn">Pecahan Pas</button>
+        <button class="qc-btn" onclick="setQuickCash(200000)">Rp 200.000</button>
+      </div>
+      <div class="pay-change-display" id="payCashChange"></div>
+    </div>
+
+    <!-- TRANSFER SECTION -->
+    <div id="transferSection" style="display:none">
+      <div class="form-group">
+        <label>Pilih Bank Tujuan</label>
+        <div class="select-wrap">
+          <select id="payBankSelect">
+            <option value="BCA">🏦 BCA</option>
+            <option value="BRI">🏦 BRI</option>
+            <option value="Mandiri">🏦 Mandiri</option>
+            <option value="BNI">🏦 BNI</option>
+            <option value="BSI">🏦 BSI (Syariah)</option>
+            <option value="DANA">📱 DANA</option>
+            <option value="OVO">📱 OVO</option>
+            <option value="GoPay">📱 GoPay</option>
+            <option value="ShopeePay">📱 ShopeePay</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Nomor Referensi (Opsional)</label>
+        <input type="text" id="payNominalInput" placeholder="Contoh: TXN-20240101-001"/>
+      </div>
+      <div style="background:rgba(49,130,206,.1);border:1px solid rgba(49,130,206,.25);border-radius:var(--radius);padding:12px;font-size:.85rem;color:#63b3ed">
+        💡 Pastikan transfer sudah masuk sebelum konfirmasi
+      </div>
+    </div>
+
+    <!-- QRIS SECTION -->
+    <div id="qrisSection" style="display:none">
+      <div class="qris-box">
+        <div class="qris-icon">📱</div>
+        <div style="font-size:1rem;font-weight:600;margin-bottom:8px">Scan QRIS</div>
+        <div class="qris-label">Tunjukkan QR Code kepada pelanggan untuk di-scan</div>
+        <div style="margin:16px auto;width:160px;height:160px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:3rem">🔲</div>
+        <div class="qris-status">✅ QRIS aktif & siap digunakan</div>
+        <div style="font-size:.75rem;color:var(--text-dim);margin-top:8px">Dukung semua e-wallet & mobile banking</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button class="btn-send" onclick="confirmPayment()" style="flex:2;font-size:.95rem;padding:14px">✅ Konfirmasi Pembayaran</button>
+      <button class="btn-clear" onclick="closePaymentModal()" style="flex:1">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ITEM NOTE MODAL ===== -->
+<div class="modal-overlay" id="itemNoteModal" style="display:none">
+  <div class="modal-card item-note-modal">
+    <div class="modal-header">
+      <h3 id="itemNoteTitle">Catatan Item</h3>
+      <button onclick="closeItemNote()">✕</button>
+    </div>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:10px">Tambahkan catatan khusus untuk item ini:</p>
+    <div class="quick-note-chips">
+      <div class="qn-chip" onclick="setQuickNote('Pedas')">🌶️ Pedas</div>
+      <div class="qn-chip" onclick="setQuickNote('Tidak pedas')">❌🌶️ Tidak Pedas</div>
+      <div class="qn-chip" onclick="setQuickNote('Pedas banget')">🔥 Pedas Banget</div>
+      <div class="qn-chip" onclick="setQuickNote('Tanpa bawang')">🧅 Tanpa Bawang</div>
+      <div class="qn-chip" onclick="setQuickNote('Extra saus')">🥫 Extra Saus</div>
+      <div class="qn-chip" onclick="setQuickNote('Tanpa nasi')">🚫 Tanpa Nasi</div>
+      <div class="qn-chip" onclick="setQuickNote('Es sedikit')">🧊 Es Sedikit</div>
+      <div class="qn-chip" onclick="setQuickNote('Manis sedikit')">🍬 Manis Sedikit</div>
+      <div class="qn-chip" onclick="setQuickNote('Take away')">📦 Take Away</div>
+    </div>
+    <div class="form-group" style="margin-top:6px">
+      <label>Tulis catatan lain:</label>
+      <input type="text" id="itemNoteInput" placeholder="Contoh: Kuah terpisah, extra kerupuk..." maxlength="80"
+        onkeydown="if(event.key==='Enter') saveItemNote()"/>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn-send" onclick="saveItemNote()" style="flex:1">💾 Simpan Catatan</button>
+      <button class="btn-clear" onclick="closeItemNote()" style="flex:1">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QR MODAL ===== -->
+<div class="modal-overlay" id="qrModal" style="display:none">
+  <div class="modal-card" style="max-width:720px">
+    <div class="modal-header">
+      <h3>📱 QR Code per Meja</h3>
+      <button onclick="closeQRModal()">✕</button>
+    </div>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:14px">Tamu scan QR di bawah untuk memesan sendiri dari meja mereka</p>
+    <div class="table-qr-grid" id="tableQRGrid"></div>
+    <button class="btn-print-qr" onclick="printQRCodes()" style="margin-top:16px">🖨️ Cetak Semua QR</button>
+  </div>
+</div>
+
+<!-- ===== STRUK MODAL (Multi-Printer) ===== -->
+<div class="modal-overlay" id="strukModal" style="display:none">
+  <div class="modal-card struk-modal" style="max-width:520px">
+    <div class="modal-header">
+      <h3>🧾 Struk Pembayaran</h3>
+      <button onclick="closeStrukModal()">✕</button>
+    </div>
+    <div class="printer-badge" id="activeStrukPrinter">🖨️ Printer: Kasir</div>
+    <div id="strukContainer" style="overflow-y:auto;max-height:calc(80vh - 180px)"></div>
+    <div class="struk-print-actions">
+      <button class="btn-send" onclick="doPrint()" style="flex:2">🖨️ Cetak Tab Ini</button>
+      <button class="btn-print" onclick="printAllStruk()" style="flex:2">🖨️ Cetak Semua</button>
+      <button class="btn-clear" onclick="closeStrukModal()" style="flex:1">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROFILE MODAL ===== -->
+<div class="modal-overlay" id="profileModal" style="display:none">
+  <div class="modal-card profile-modal">
+    <div class="modal-header">
+      <h3>👤 Profile & Pengaturan</h3>
+      <button onclick="closeProfileModal()">✕</button>
+    </div>
+    <div id="profileContent" style="overflow-y:auto;max-height:75vh"></div>
+  </div>
+</div>
+
+<!-- ===== REKAP MODAL ===== -->
+<div class="modal-overlay" id="rekapModal" style="display:none">
+  <div class="modal-card" style="max-width:480px">
+    <div class="modal-header">
+      <h3>📋 Rekap Harian</h3>
+      <button onclick="closeRekapModal()">✕</button>
+    </div>
+    <div id="rekapPreviewContent" style="overflow-y:auto;max-height:70vh;padding:4px"></div>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn-send" onclick="doPrintRekap()" style="flex:1">🖨️ Print Rekap</button>
+      <button class="btn-clear" onclick="closeRekapModal()" style="flex:1">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/kasir.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").then(()=>console.log("SW registered")).catch(e=>console.log("SW error:",e));}</script>
+</body>
+</html>

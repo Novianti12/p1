@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dapur – Keday 70</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#e2a925"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <link rel="apple-touch-icon" href="icons/icon.svg"/>
+</head>
+<body class="app-page dapur-page">
+
+<header class="topbar dapur-topbar">
+  <div class="topbar-left">
+    <div class="logo-sm dapur-logo">👨‍🍳</div>
+    <div>
+      <div class="topbar-title">Layar Dapur</div>
+      <div class="topbar-sub" id="cabangLabel">–</div>
+    </div>
+  </div>
+  <div class="topbar-center">
+    <div class="dapur-stats">
+      <div class="dstat"><div class="dstat-num" id="statMenunggu">0</div><div class="dstat-label">Menunggu</div></div>
+      <div class="dstat"><div class="dstat-num" id="statDiproses">0</div><div class="dstat-label">Diproses</div></div>
+      <div class="dstat done"><div class="dstat-num" id="statSelesai">0</div><div class="dstat-label">Selesai</div></div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="time-display" id="timeDisplay"></div>
+    <div id="shiftIndicator" style="font-size:.7rem;margin-top:2px;text-align:right">–</div>
+    <button class="btn-icon" onclick="openProfileModal()" title="Profile & Shift" style="font-size:.8rem">⚙️</button>
+    <button class="btn-icon" onclick="window.location='index.html'" title="Logout">⏻</button>
+  </div>
+</header>
+
+<div class="dapur-board" id="dapurBoard">
+  <div class="dapur-col">
+    <div class="col-header new">🔴 Pesanan Baru</div>
+    <div class="order-cards" id="colBaru"></div>
+  </div>
+  <div class="dapur-col">
+    <div class="col-header process">🟡 Sedang Diproses</div>
+    <div class="order-cards" id="colProses"></div>
+  </div>
+  <div class="dapur-col">
+    <div class="col-header done">🟢 Siap Disajikan</div>
+    <div class="order-cards" id="colSelesai"></div>
+  </div>
+</div>
+
+<audio id="notifSound" preload="auto">
+  <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAA..." type="audio/wav"/>
+</audio>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal" style="display:none">
+  <div class="modal-card profile-modal">
+    <div class="modal-header">
+      <h3>👨‍🍳 Profile & Pengaturan</h3>
+      <button onclick="closeProfileModal()">✕</button>
+    </div>
+    <div id="profileContent" style="overflow-y:auto;max-height:75vh"></div>
+  </div>
+</div>
+
+<!-- REKAP MODAL -->
+<div class="modal-overlay" id="rekapModal" style="display:none">
+  <div class="modal-card" style="max-width:480px">
+    <div class="modal-header">
+      <h3>📋 Rekap Dapur</h3>
+      <button onclick="closeRekapModal()">✕</button>
+    </div>
+    <div id="rekapPreviewContent" style="overflow-y:auto;max-height:70vh;padding:4px"></div>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn-send" onclick="doPrintRekap()" style="flex:1">🖨️ Print Rekap</button>
+      <button class="btn-clear" onclick="closeRekapModal()" style="flex:1">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/dapur.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").then(()=>console.log("SW registered")).catch(e=>console.log("SW error:",e));}</script>
+</body>
+</html>

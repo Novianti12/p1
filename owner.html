@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Owner Dashboard – Keday 70</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#e2a925"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <link rel="apple-touch-icon" href="icons/icon.svg"/>
+</head>
+<body class="app-page owner-page">
+
+<header class="topbar owner-topbar">
+  <div class="topbar-left">
+    <div class="logo-sm">K<span>70</span></div>
+    <div>
+      <div class="topbar-title">Owner Dashboard</div>
+      <div class="topbar-sub">Keday Tujuh Puluh — Semua Cabang</div>
+    </div>
+  </div>
+  <div class="topbar-center">
+    <div class="time-display" id="timeDisplay"></div>
+  </div>
+  <div class="topbar-right">
+    <div class="user-chip" id="userChip" onclick="openProfileModal()" style="cursor:pointer" title="Profile">👤 Profile</div>
+    <button class="btn-icon" onclick="window.location='index.html'" title="Logout">⏻</button>
+  </div>
+</header>
+
+<div class="owner-layout">
+  <!-- SIDEBAR -->
+  <nav class="owner-sidebar">
+    <button class="sidebar-btn active" onclick="showSection('overview')" id="btn-overview">📊 Overview</button>
+    <button class="sidebar-btn" onclick="showSection('transaksi')" id="btn-transaksi">🧾 Transaksi</button>
+    <button class="sidebar-btn" onclick="showSection('menu-mgmt')" id="btn-menu-mgmt">🍜 Kelola Menu</button>
+    <button class="sidebar-btn" onclick="showSection('laporan')" id="btn-laporan">📈 Laporan</button>
+    <button class="sidebar-btn" onclick="showSection('akun')" id="btn-akun">👤 Akun</button>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="owner-main">
+
+    <!-- OVERVIEW -->
+    <section id="sec-overview" class="owner-section active">
+      <div class="section-head">
+        <h2>Overview Hari Ini</h2>
+        <div class="date-chip" id="todayDate"></div>
+      </div>
+      <div class="branch-tabs">
+        <button class="btab active" onclick="switchBranch('all')" id="btab-all">🏢 Semua Cabang</button>
+        <button class="btab" onclick="switchBranch('sukaseuri')" id="btab-sukaseuri">Sukaseuri</button>
+        <button class="btab" onclick="switchBranch('purwasari')" id="btab-purwasari">Purwasari</button>
+      </div>
+      <div class="kpi-grid" id="kpiGrid"></div>
+      <div class="dashboard-grid">
+        <div class="dash-card full">
+          <div class="dash-card-header">📋 Transaksi Terbaru</div>
+          <div class="recent-orders" id="recentOrders"></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-header">🏆 Menu Terlaris</div>
+          <div class="top-menu" id="topMenu"></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-header">📊 Status Order</div>
+          <div class="order-status-chart" id="orderStatusChart"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRANSAKSI -->
+    <section id="sec-transaksi" class="owner-section">
+      <div class="section-head">
+        <h2>Riwayat Transaksi</h2>
+        <div class="filter-bar">
+          <select id="filterCabang" onchange="loadTransaksi()">
+            <option value="all">Semua Cabang</option>
+            <option value="sukaseuri">Sukaseuri</option>
+            <option value="purwasari">Purwasari</option>
+          </select>
+          <input type="date" id="filterDate" onchange="loadTransaksi()"/>
+        </div>
+      </div>
+      <div class="transaksi-table-wrap">
+        <table class="data-table" id="transaksiTable">
+          <thead>
+            <tr>
+              <th>No. Order</th><th>Cabang</th><th>Meja</th><th>Waktu</th>
+              <th>Item</th><th>Total</th><th>Status</th><th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="transaksiBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MENU MANAGEMENT -->
+    <section id="sec-menu-mgmt" class="owner-section">
+      <div class="section-head">
+        <h2>Kelola Menu</h2>
+        <button class="btn-add-menu" onclick="openAddMenu()">+ Tambah Menu</button>
+      </div>
+      <div class="menu-mgmt-grid" id="menuMgmtGrid"></div>
+      <div class="modal-overlay" id="menuModal" style="display:none">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h3 id="menuModalTitle">Tambah Menu</h3>
+            <button onclick="closeMenuModal()">✕</button>
+          </div>
+          <div class="form-group"><label>Nama Menu</label><input type="text" id="mNama" placeholder="Nama menu..."/></div>
+          <div class="form-group"><label>Kategori</label>
+            <div class="select-wrap"><select id="mKategori">
+              <option value="bakso">Bakso</option><option value="chicken">Chicken</option>
+              <option value="dimsum">Dimsum</option><option value="nasi">Nasi</option>
+              <option value="minuman">Minuman</option><option value="dessert">Dessert</option>
+            </select></div>
+          </div>
+          <div class="form-group"><label>Harga (Rp)</label><input type="number" id="mHarga" placeholder="0"/></div>
+          <div class="form-group"><label>Emoji</label><input type="text" id="mEmoji" placeholder="🍜" maxlength="2"/></div>
+          <div class="form-group">
+            <label>Tersedia</label>
+            <label class="toggle-switch"><input type="checkbox" id="mAvail" checked/><span class="toggle-slider"></span></label>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:16px">
+            <button class="btn-send" onclick="saveMenu()" style="flex:1">💾 Simpan</button>
+            <button class="btn-clear" onclick="closeMenuModal()" style="flex:1">Batal</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LAPORAN -->
+    <section id="sec-laporan" class="owner-section">
+      <div class="section-head">
+        <h2>Laporan Penjualan</h2>
+        <div class="filter-bar">
+          <select id="laporanCabang">
+            <option value="all">Semua Cabang</option>
+            <option value="sukaseuri">Sukaseuri</option>
+            <option value="purwasari">Purwasari</option>
+          </select>
+          <select id="laporanPeriod" onchange="loadLaporan()">
+            <option value="today">Hari Ini</option>
+            <option value="week">7 Hari Terakhir</option>
+            <option value="month">Bulan Ini</option>
+          </select>
+          <button class="btn-export" onclick="exportLaporan()">📥 Export CSV</button>
+        </div>
+      </div>
+      <div class="laporan-summary" id="laporanSummary"></div>
+      <div class="laporan-chart-wrap">
+        <canvas id="laporanChart" height="200"></canvas>
+      </div>
+    </section>
+
+    <!-- AKUN -->
+    <section id="sec-akun" class="owner-section">
+      <div class="section-head"><h2>Manajemen Akun</h2>
+        <button class="btn-add-menu" onclick="openAddAkun()">+ Tambah Akun</button>
+      </div>
+      <div class="akun-grid" id="akunGrid"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal" style="display:none">
+  <div class="modal-card profile-modal">
+    <div class="modal-header">
+      <h3>👑 Profile Owner & Pengaturan</h3>
+      <button onclick="closeProfileModal()">✕</button>
+    </div>
+    <div id="profileContent" style="overflow-y:auto;max-height:75vh"></div>
+  </div>
+</div>
+
+<!-- REKAP MODAL -->
+<div class="modal-overlay" id="rekapModal" style="display:none">
+  <div class="modal-card" style="max-width:480px">
+    <div class="modal-header">
+      <h3>📋 Rekap Harian</h3>
+      <button onclick="closeRekapModal()">✕</button>
+    </div>
+    <div id="rekapPreviewContent" style="overflow-y:auto;max-height:70vh;padding:4px"></div>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn-send" onclick="doPrintRekap()" style="flex:1">🖨️ Print Rekap</button>
+      <button class="btn-clear" onclick="closeRekapModal()" style="flex:1">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/owner.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").then(()=>console.log("SW registered")).catch(e=>console.log("SW error:",e));}</script>
+</body>
+</html>

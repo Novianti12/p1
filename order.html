@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pesan – Keday 70</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#e2a925"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <link rel="apple-touch-icon" href="icons/icon.svg"/>
+</head>
+<body class="order-page">
+
+<header class="order-header">
+  <div class="order-logo">
+    <div class="logo-circle sm">K<span>70</span></div>
+    <div>
+      <div class="order-brand">Keday Tujuh Puluh</div>
+      <div class="order-table-info" id="tableInfo">Memuat info meja...</div>
+    </div>
+  </div>
+</header>
+
+<div class="order-layout">
+
+  <!-- MENU SECTION -->
+  <div class="order-menu-wrap">
+    <div class="order-search">
+      <span>🔍</span>
+      <input type="text" placeholder="Cari menu..." oninput="filterOrderMenu(this.value)"/>
+    </div>
+
+    <div class="order-cats" id="orderCats"></div>
+    <div class="order-menu-grid" id="orderMenuGrid"></div>
+  </div>
+
+  <!-- CART SECTION -->
+  <div class="order-cart">
+    <div class="cart-header">🛒 Pesanan Saya</div>
+    <div class="cart-items" id="cartItems">
+      <div class="empty-cart">
+        <div style="font-size:2.5rem">🍽️</div>
+        <div>Keranjang kosong</div>
+      </div>
+    </div>
+    <div class="order-note-wrap">
+      <input type="text" id="customerNote" placeholder="📝 Catatan untuk dapur..."/>
+    </div>
+    <div class="cart-summary">
+      <div class="cart-row"><span>Subtotal</span><span id="cartSub">Rp 0</span></div>
+      <div class="cart-row tax"><span>Pajak (10%)</span><span id="cartTax">Rp 0</span></div>
+      <div class="cart-row total"><span>TOTAL</span><span id="cartTotal">Rp 0</span></div>
+    </div>
+    <button class="btn-order-send" id="btnOrderSend" onclick="submitOrder()">
+      Pesan Sekarang 🚀
+    </button>
+  </div>
+
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div class="order-success" id="orderSuccess" style="display:none">
+  <div class="success-content">
+    <div class="success-icon">✅</div>
+    <h2>Pesanan Diterima!</h2>
+    <p>Pesanan kamu sudah dikirim ke dapur.<br/>Silakan tunggu, kami akan segera menyiapkannya!</p>
+    <div class="order-number" id="successOrderNum"></div>
+    <button onclick="resetOrder()" class="btn-order-again">🛒 Pesan Lagi</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/order-online.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").then(()=>console.log("SW registered")).catch(e=>console.log("SW error:",e));}</script>
+</body>
+</html>
